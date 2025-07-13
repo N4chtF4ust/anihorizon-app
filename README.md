@@ -1,50 +1,136 @@
-# Welcome to your Expo app 👋
+Here’s a **cleaned up and corrected version** of your `README.md` to reflect that your app **doesn't use Redux** or **user authentication**, and instead uses **local state and AsyncStorage** for tracking.
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+---
 
-## Get started
+# AnimeHorizon 🌅
 
-1. Install dependencies
+A modern anime discovery and tracking app built with React Native and Expo.
+
+---
+
+## 📱 Features
+
+* **Anime Discovery**: Browse and discover new anime series and movies
+* **Local Tracking**: Keep track of watched, watching, and plan-to-watch anime using your device
+* **Detailed Information**: View anime details like descriptions, ratings, and episode info
+* **Search & Filter**: Find anime by title, genre, year, and more
+* **Offline Support**: Access your local library even without internet
+* **Cross-Platform**: Runs on both iOS and Android via Expo
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+* Node.js (v16+)
+* npm or yarn
+* Expo CLI:
+
+  ```bash
+  npm install -g expo-cli
+  ```
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/N4chtF4ust/anihorizon-app.git
+   cd anihorizon-app
+   ```
+
+2. Install dependencies:
 
    ```bash
    npm install
+   # or
+   yarn install
    ```
 
-2. Start the app
+3. Start development:
 
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+4. Open the app:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+   * Press `i` for iOS simulator
+   * Press `a` for Android emulator
+   * Scan QR code with Expo Go app
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## 🛠️ Tech Stack
 
-When you're ready, run:
+| Category         | Tech                                      |
+| ---------------- | ----------------------------------------- |
+| Framework        | React Native + Expo                       |
+| Navigation       | React Navigation                          |
+| State Management | **useState/useEffect + AsyncStorage**     |
+| Styling          | StyleSheet / Tailwind / Styled Components |
+| Data Source      | \[Anime API name] (e.g., AniList, Jikan)  |
+| Local Storage    | AsyncStorage                              |
+
+
+
+
+---
+
+## 🧪 Testing
+
+You can add tests using any framework like Jest or Detox (optional):
 
 ```bash
-npm run reset-project
+npm test
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
 
-To learn more about developing your project with Expo, look at the following resources:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
-## Join the community
 
-Join our community of developers creating universal apps.
+## 📦 Building for Production
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+npx expo build:android
+npx expo build:ios
+```
+
+Or with EAS:
+
+```bash
+npx eas build --platform all
+```
+
+---
+
+## 📸 Screenshots
+
+*Add screenshots of your app UI here.*
+
+
+
+---
+
+## 👤 Author
+
+* **Your Name** – [@yourusername](https://github.com/yourusername)
+
+---
+
+## 🙏 Acknowledgments
+
+* Anime data provided by \[API Name]
+* Icons by \[Icon Provider]
+* Built with 💖 by the React Native & Expo community
+
+---
+
+---
+
+**Happy anime watching! 🍿**
+
+

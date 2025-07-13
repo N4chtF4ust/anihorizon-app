@@ -43,6 +43,7 @@
       "typedRoutes": true
     },
     "extra": {
+      "apiUrl": "http://192.168.100.14:4000",
       "router": {},
       "eas": {
         "projectId": "419d5766-038b-4b74-84a2-78abc9e91aa4"
