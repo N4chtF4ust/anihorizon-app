@@ -1,4 +1,8 @@
-# AniHorizon 🌅
+Here’s a **cleaned up and corrected version** of your `README.md` to reflect that your app **doesn't use Redux** or **user authentication**, and instead uses **local state and AsyncStorage** for tracking.
+
+---
+
+# AnimeHorizon 🌅
 
 A modern anime discovery and tracking app built with React Native and Expo.
 
