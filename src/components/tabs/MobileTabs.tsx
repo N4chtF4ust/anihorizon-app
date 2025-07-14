@@ -16,9 +16,9 @@ const MobileTabs = () => {
             backgroundColor: '#172554',
             position: 'absolute',
 
-            bottom: insets.bottom  + 10,
+            bottom: 10,
             borderRadius: 30,
-            height: 50,
+            height: "7%",
             borderTopWidth: 0,
             overflow: 'hidden',
             marginLeft: 20,
@@ -26,8 +26,11 @@ const MobileTabs = () => {
           },
           tabBarItemStyle: {
             overflow: 'hidden',
-            height: 100,
+  
             margin: 0,
+             borderRadius: 30,
+        
+
           },
           tabBarActiveBackgroundColor: '#fff',
           tabBarLabelStyle: {

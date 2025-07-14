@@ -1,8 +1,4 @@
-Here’s a **cleaned up and corrected version** of your `README.md` to reflect that your app **doesn't use Redux** or **user authentication**, and instead uses **local state and AsyncStorage** for tracking.
-
----
-
-# AnimeHorizon 🌅
+# AniHorizon 🌅
 
 A modern anime discovery and tracking app built with React Native and Expo.
 
@@ -12,7 +8,7 @@ A modern anime discovery and tracking app built with React Native and Expo.
 
 * **Anime Discovery**: Browse and discover new anime series and movies
 * **Local Tracking**: Keep track of watched, watching, and plan-to-watch anime using your device
-* **Detailed Information**: View anime details like descriptions, ratings, and episode info
+* **Detailed Information**: View anime details like descriptions, and episode info
 * **Search & Filter**: Find anime by title, genre, year, and more
 * **Offline Support**: Access your local library even without internet
 * **Cross-Platform**: Runs on both iOS and Android via Expo
@@ -67,30 +63,11 @@ A modern anime discovery and tracking app built with React Native and Expo.
 | Category         | Tech                                      |
 | ---------------- | ----------------------------------------- |
 | Framework        | React Native + Expo                       |
-| Navigation       | React Navigation                          |
-| State Management | **useState/useEffect + AsyncStorage**     |
 | Styling          | StyleSheet / Tailwind / Styled Components |
-| Data Source      | \[Anime API name] (e.g., AniList, Jikan)  |
+| Data Source      | [aniwatch-api](https://github.com/ghoshRitesh12/aniwatch-api)  |
 | Local Storage    | AsyncStorage                              |
 
-
-
-
 ---
-
-## 🧪 Testing
-
-You can add tests using any framework like Jest or Detox (optional):
-
-```bash
-npm test
-```
-
----
-
-
-
-
 
 ## 📦 Building for Production
 
@@ -117,17 +94,13 @@ npx eas build --platform all
 
 ## 👤 Author
 
-* **Your Name** – [@yourusername](https://github.com/yourusername)
-
----
+* **N4cht** – [@N4chtF4ust](https://github.com/N4chtF4ust)
 
 ## 🙏 Acknowledgments
 
-* Anime data provided by \[API Name]
-* Icons by \[Icon Provider]
+* Anime data provided by AniWatch API
+* Icons from Expo Vector Icons
 * Built with 💖 by the React Native & Expo community
-
----
 
 ---
 
