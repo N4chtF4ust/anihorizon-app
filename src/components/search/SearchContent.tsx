@@ -6,6 +6,7 @@ import {
   View,
   Animated,
   Image,
+  ScrollView,
 } from 'react-native';
 import AnimeCard from './AnimeCard';
 import { Anime } from '@/src/types/search';
@@ -14,9 +15,10 @@ interface SearchContentProps {
   query: string;
   loading: boolean;
   data: Anime[];
+  error: string;
 }
 
-const SearchContent: React.FC<SearchContentProps> = ({ query, loading, data }) => {
+const SearchContent: React.FC<SearchContentProps> = ({ query, loading, data,error }) => {
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
@@ -62,30 +64,53 @@ const SearchContent: React.FC<SearchContentProps> = ({ query, loading, data }) =
     );
   }
 
-  if (!loading && data.length === 0) {
+  if (!loading && data.length === 0 ) {
     return (
 <View className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 items-center justify-center">
-  <Image
+
+{error ? (
+
+  <>
+
+    <Image
+    source={require('@/assets/images/internalServerError.png')}
+    className="size-72"
+
+  />
+  <Text className="text-red-500 text-center">{error}</Text>
+    </>
+) : (
+
+  <>
+  
+    <Image
     source={require('@/assets/images/cry.png')}
     className="size-72"
 
   />
-  <Text className="text-red-400 mt-2">
-    No results found
-  </Text>
+  <Text className="text-red-400 mt-2">No results found</Text>
+
+  </>
+)}
+
 </View>
 
     );
   }
 
-  return (
-    <FlatList
-      className="w-full h-[84%] flex-1"
-      data={data}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item,index }) => <AnimeCard anime={item} isLast={index === data.length - 1}/>}
-    />
-  );
+return (
+  <ScrollView className="w-full h-auto ">
+    <View className="flex flex-col">
+      {data.map((item, index) => (
+        <AnimeCard
+          key={item.id}
+          anime={item}
+          isLast={index === data.length - 1}
+        />
+      ))}
+    </View>
+  </ScrollView>
+)
 };
 
 export default SearchContent;

@@ -27,8 +27,12 @@ const MobileTabs = () => {
           tabBarItemStyle: {
             overflow: 'hidden',
   
-            margin: 0,
-             borderRadius: 30,
+             margin: 0,
+             borderTopLeftRadius: 30,
+             borderTopRightRadius: 30,
+             borderBottomRightRadius: 0,
+             borderBottomLeftRadius: 0,
+             height: 100,
         
 
           },

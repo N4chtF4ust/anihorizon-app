@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View, Image } from 'react-native';
 import { formatTime } from '../../utils/formatTime';
 import ReminderButton from './ReminderButton';
 
@@ -32,7 +32,7 @@ const ScheduleItem = ({
     return `${days}d ${hours}h ${minutes}m ${seconds}s`;
   };
 
-  const [countdown, setCountdown] = useState(getRemainingTime()); // set immediately
+  const [countdown, setCountdown] = useState(getRemainingTime());
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -45,25 +45,35 @@ const ScheduleItem = ({
   return (
     <TouchableOpacity
       onPress={handlePress}
-      className="bg-gray-800 p-3 my-2 rounded-xl"
+      className="bg-gray-800 p-3 mb-2 rounded-xl flex-row items-center"
     >
-      <Text className="text-white font-bold text-base">
-        {anime.name} (EP {anime.episode})
-      </Text>
+      {/* LEFT: Text Content */}
+      <View className="flex-1 pr-3">
+        <Text className="text-white font-bold text-base">
+          {anime.name} (EP {anime.episode})
+        </Text>
 
-      <Text className="text-gray-300 text-sm">
-        Air in: {formatTime(fullDateTime)}
-      </Text>
+        <Text className="text-gray-300 text-sm">
+          Air in: {formatTime(fullDateTime)}
+        </Text>
 
-      <Text className="text-brand-pale text-xs mt-1">
-        {countdown}
-      </Text>
+        <Text className="text-brand-pale text-xs mt-1">{countdown}</Text>
 
-      <Text className="text-gray-500 text-xs italic">{anime.jname}</Text>
+        <Text className="text-gray-500 text-xs italic">{anime.jname}</Text>
 
-      <View className="mt-2">
-        <ReminderButton anime={anime} selectedDate={selectedDate} />
+        <View className="mt-2">
+          <ReminderButton anime={anime} selectedDate={selectedDate} />
+        </View>
       </View>
+
+      {/* RIGHT: Image */}
+      {anime.poster && (
+        <Image
+          source={{ uri: anime.poster }}
+          style={{ width: 80, height: 100, borderRadius: 8 }}
+          resizeMode="cover"
+        />
+      )}
     </TouchableOpacity>
   );
 };

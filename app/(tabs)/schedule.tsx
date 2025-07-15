@@ -1,111 +1,153 @@
-import { fetchSchedule } from '@/src/api/schedule';
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import {
   ActivityIndicator,
+  Animated,
+  Pressable,
+  RefreshControl,
   SafeAreaView,
   ScrollView,
   Text,
   View,
 } from 'react-native';
-import { Calendar } from 'react-native-calendars';
+import { Ionicons } from '@expo/vector-icons';
 
-import ScheduleList from '../../src/components/schedule/ScheduleList';
-
+import CalendarCard from '@/src/components/schedule/CalendarCard';
+import ScheduleList from '@/src/components/schedule/ScheduleList';
+import { useSchedule } from '@/src/hooks/useSchedule';
+import { useCalendarAnimation } from '@/src/hooks/useCalendarAnimation';
 
 const Schedule = () => {
-  // ✅ Use local timezone-aware date in YYYY-MM-DD format
-  const today = new Date().toLocaleDateString('en-CA'); // e.g., "2025-07-13"
-  const [selectedDate, setSelectedDate] = useState(today);
-  const [schedule, setSchedule] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const today = useMemo(() => new Date().toLocaleDateString('en-CA'), []);
 
-  const formatDisplayDate = (dateString: string) => {
-    const date = new Date(dateString);
+  const {
+    selectedDate,
+    schedule,
+    loading,
+    refreshing,
+    error,
+    handleDayPress,
+    handleRefresh,
+  } = useSchedule(today);
+
+  const {
+    showCalendar,
+    toggleCalendar,
+    calendarOpacity,
+    calendarTranslateY,
+    buttonScale,
+    dateMarginTop,
+  } = useCalendarAnimation();
+
+  const displayDate = useMemo(() => {
+    const date = new Date(selectedDate);
     return date.toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     });
-  };
-
-const handleDayPress = (day: any) => {
-  const newDate = day.dateString;
-  if (newDate === selectedDate) return; // Prevent re-triggering fetch
-  setSchedule([]); // Clear old data
-  setSelectedDate(newDate); // Triggers fetch
-};
-
-
-  // 🔁 Fetch schedule when selectedDate changes
-  useEffect(() => {
-    const loadSchedule = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        console.log('Fetching schedule for:', selectedDate);
-        const data = await fetchSchedule(selectedDate);
-        console.log('Fetched data:', data);
-        setSchedule(data);
-      } catch (err: any) {
-        setError(err.message || 'Something went wrong');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadSchedule();
   }, [selectedDate]);
 
-  // ✅ Simulate pressing today on mount (in user's local timezone)
-  useEffect(() => {
-    handleDayPress({ dateString: today });
-  }, []);
+  const showLoadingOverlay = loading && schedule.length === 0;
 
   return (
-    <SafeAreaView className="bg-black  h-full">
-      <ScrollView contentContainerStyle={{ paddingBottom: 100 }} 
-    
-      showsVerticalScrollIndicator={false}>
-        <View className="bg-black pt-10 ">
+    <SafeAreaView className="bg-black h-full">
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 100 }}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor="#8CCDEB"
+            colors={['#8CCDEB']}
+          />
+        }
+        removeClippedSubviews
+        maxToRenderPerBatch={10}
+        windowSize={10}
+      >
+        <View className="bg-black pt-10 px-4 items-center w-full min-h-screen space-y-4">
+          {/* Toggle Button */}
+          <Animated.View style={{ transform: [{ scale: buttonScale }] }} className="absolute top-12 z-20">
+            <Pressable
+              onPress={toggleCalendar}
+              className="flex-row items-center space-x-2 px-4 py-2 bg-brand-primary rounded-full"
+            >
+               {/* Icon wrapper with relative position */}
+                <View className="relative h-8 w-8 mr-2 justify-center items-center">
+                  {/* Calendar icon (background) */}
+                  <Ionicons
+                    name="calendar"
+                    size={18}
+                    color="#fff"
+                  />
+              
+                  {/* Ban icon (overlay) - Always rendered but with opacity animation */}
+                  <Animated.View
+                    style={{
+                      position: 'absolute',
+                      opacity: showCalendar ? 1 : 0,
+                    }}
+                    pointerEvents="none"
+                  >
+                    <Ionicons
+                      name="ban-outline"
+                      size={30}
+                      color="red"
+                    />
+                  </Animated.View>
+                </View>
+              
+                {/* Label */}
+                <Text className="text-white font-semibold">
+                  {showCalendar ? 'Hide' : 'Show'}
+                </Text>
+            </Pressable>
+          </Animated.View>
+
           {/* Calendar */}
-          <View className="rounded-2xl bg-brand-dark p-4 mb-4">
-            <Calendar
-              onDayPress={handleDayPress}
-              markedDates={{
-                [selectedDate]: {
-                  selected: true,
-                  marked: true,
-                  selectedColor: '#725CAD',
-                  selectedTextColor: '#FFF',
-                },
+          {showCalendar && (
+            <Animated.View
+              style={{
+                opacity: calendarOpacity,
+                transform: [{ translateY: calendarTranslateY }],
               }}
-              disableAllTouchEventsForInactiveDays
-              theme={{
-                selectedDayBackgroundColor: '#3B82F6',
-                todayTextColor: '#3B82F6',
-                arrowColor: '#8CCDEB',
-                textSectionTitleColor: '#FFF',
-                calendarBackground: 'transparent',
-                textDayFontFamily: 'System',
-                textMonthFontWeight: 'bold',
-                monthTextColor: '#FFF',
-                textDayStyle: { color: '#FFF' },
-                textDisabledColor: '#9CA3AF',
-              }}
-            />
-          </View>
+              className="w-full"
+            >
+              <CalendarCard
+                selectedDate={selectedDate}
+                onDayPress={handleDayPress}
+              />
+            </Animated.View>
+          )}
 
-          {/* Selected Date */}
-          <Text className="text-center mt-4 text-gray-300 text-lg">
-            {selectedDate ? formatDisplayDate(selectedDate) : 'Please select a date'}
-          </Text>
+          {/* Date Display */}
+          <Animated.View
+            style={{ marginTop: dateMarginTop }}
+            className="mt-2"
+          >
+            <View className="flex-row items-center justify-center mt-2 mb-2 rounded">
+              <Ionicons name="time-outline" size={24} color="white" className="mr-2" />
+              <Text className="text-gray-300 text-lg font-medium">{displayDate}</Text>
+            </View>
+          </Animated.View>
 
-          {loading && <ActivityIndicator size="large" color="#8CCDEB" className='top-1/3' />}
-          {error && <Text className="text-red-500 text-center">{error}</Text>}
+          {/* Loading Spinner */}
+          {loading && (
+            <View className={`flex-row items-center mt-2 h-screen absolute ${showCalendar? "pt-96" : ""}`}>
+              <ActivityIndicator size="small" color="#8CCDEB" />
+              <Text className="text-gray-400 ml-2">Updating...</Text>
+            </View>
+          )}
 
-          {/* List */}
-          <ScheduleList schedule={schedule} loading={loading} error={error} selectedDate={selectedDate} />
+          {/* Schedule List */}
+          <ScheduleList
+            schedule={schedule}
+            loading={loading}
+            error={error}
+            selectedDate={selectedDate}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

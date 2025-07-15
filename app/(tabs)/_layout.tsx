@@ -17,29 +17,47 @@ import MobileTabs from '../../src/components/tabs/MobileTabs';
 
 const Drawer = createDrawerNavigator();
 
+// Foreground handler (banner, sound)
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+ 
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
 export default function RootLayout() {
   useEffect(() => {
     if (Platform.OS !== 'web') {
+      // Handle background tap or killed state
       const checkInitialNotification = async () => {
         const response = await Notifications.getLastNotificationResponseAsync();
-        if (response) {
-          const animeId = response.notification.request.content.data.animeId;
-          if (animeId) {
-            router.push(`../details/${animeId}`);
-          }
+        if (response?.notification?.request?.content?.data?.animeId) {
+          router.push(`../details/${response.notification.request.content.data.animeId}`);
         }
       };
-
       checkInitialNotification();
 
-      const sub = Notifications.addNotificationResponseReceivedListener((response) => {
+      // Handle notification tap when app is running or backgrounded
+      const responseListener = Notifications.addNotificationResponseReceivedListener((response) => {
         const animeId = response.notification.request.content.data.animeId;
         if (animeId) {
           router.push(`../details/${animeId}`);
         }
       });
 
-      return () => sub.remove();
+      // Handle foreground (active) notification
+      const receiveListener = Notifications.addNotificationReceivedListener((notification) => {
+        console.log('Foreground notification:', notification);
+        // You can optionally show a custom UI here
+      });
+
+      return () => {
+        responseListener.remove();
+        receiveListener.remove();
+      };
     }
   }, []);
 

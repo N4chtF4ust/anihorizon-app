@@ -66,7 +66,7 @@ const notificationId = await Notifications.scheduleNotificationAsync({
   },
   trigger: {
     type: 'date',
-    date: airingTime, 
+    date: airingTime,  //new Date(new Date(Date.now() + 5000), // remove or use this comment for test
   },
 });
 

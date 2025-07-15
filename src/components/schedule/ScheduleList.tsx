@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text,Image } from 'react-native';
 import ScheduleItem from './ScheduleItem';
 
 interface ScheduleListProps {
@@ -19,9 +19,18 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
 
   if (error) {
     return (
+
+      <>
+      
+          <Image
+          source={require('@/assets/images/internalServerError.png')}
+          className="size-72"
+      
+        />
       <Text className="text-red-500 mt-4 text-center">
-        Failed to load schedule: {error}
+       {error}
       </Text>
+      </>
     );
   }
 
@@ -36,7 +45,7 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
   }
 
   return (
-    <View className="mt-4">
+    <View className="   flex-1 w-full">
       {scheduledAnimes?.map((anime: any, index: number) => (
         <ScheduleItem
           key={`${anime.id}-${anime.time}-${index}`}

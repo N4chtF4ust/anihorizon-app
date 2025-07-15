@@ -1,26 +1,41 @@
-import Constants from 'expo-constants';
-
-const API_URL = Constants.expoConfig?.extra?.apiUrl;
+import {API_URL,TIMEOUT_MS} from './configuration';
 
 export const info = async (animeId: string) => {
+
+    if (!API_URL) {
+    throw new Error('API URL is not configured');
+  }
+  
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
+    const url = `${API_URL}/api/v2/hianime/anime/${animeId}`;
+
   console.log('API_URL:', API_URL);
-  console.log('Full URL:', `${API_URL}/api/v2/hianime/anime/${animeId}`);
+  console.log('Full URL:', url);
 
   if (!API_URL) {
     throw new Error('API URL is not configured');
   }
 
   try {
-    const response = await fetch(`${API_URL}/api/v2/hianime/anime/${animeId}`);
+    const response = await fetch(url, {
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeout); // ✅ Stop the timeout if successful
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch schedule: ${response.status}`);
+      throw new Error(`Failed to fetch info: ${response.status}`);
     }
 
-    const data = await response.json(); // ✅ Get the JSON body
-    return data; // ✅ Return it to the caller
-  } catch (error) {
-    console.error('Error fetching schedule:', error);
-    throw error;
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      throw new Error('Request timed out. Server might be down.');
+    }
+    console.error('Error fetching info:', error);
+    throw new Error(`Network or server error: ${error.message}`);
   }
+
 };
