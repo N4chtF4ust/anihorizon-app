@@ -3,14 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity, View, Image } from 'react-native';
 import { formatTime } from '../../utils/formatTime';
 import ReminderButton from './ReminderButton';
+import {ScheduledAnime} from '@/src/types/schedule'
 
-const ScheduleItem = ({
-  anime,
-  selectedDate,
-}: {
-  anime: any;
+interface ScheduleItemProps {
+  anime: ScheduledAnime;
   selectedDate: string;
-}) => {
+}
+
+const ScheduleItem = ({anime,selectedDate}: ScheduleItemProps) => {
   if (!anime) return null;
 
   const handlePress = () => router.push(`/details/${anime.id}`);
@@ -67,13 +67,7 @@ const ScheduleItem = ({
       </View>
 
       {/* RIGHT: Image */}
-      {anime.poster && (
-        <Image
-          source={{ uri: anime.poster }}
-          style={{ width: 80, height: 100, borderRadius: 8 }}
-          resizeMode="cover"
-        />
-      )}
+
     </TouchableOpacity>
   );
 };

@@ -1,49 +1,56 @@
-import * as FileSystem from 'expo-file-system';
+import { Ionicons } from '@expo/vector-icons';
+import { useLayoutEffect, useMemo } from 'react';
 import {
-  View,
-  Text,
-  ScrollView,
   ActivityIndicator,
+  Animated,
+  Image,
   Pressable,
   RefreshControl,
+  Text,
+  View,
 } from 'react-native';
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useLayoutEffect,
-  useMemo,
-} from 'react';
-import { useLocalSearchParams, useNavigation } from 'expo-router';
-import { info } from '@/src/api/info';
-import { Root, Data } from '@/src/types/info';
-import { Ionicons } from '@expo/vector-icons';
-import ScrollViewVertical from '@/src/components/scroll/ScrollViewVertical';
+
+import { useAnimeDetails } from '@/src/hooks/useAnimeDetails';
+import useScrollHeader from '@/src/hooks/useScrollHeader';
 import AnimeDetails from '@/src/components/details/AnimeDetails';
+import ScrollViewVertical from '@/src/components/scroll/ScrollViewVertical';
+import AnimatedHeader from '@/src/components/layout/AnimatedHeader';
 
-const CACHE_DURATION = 24 * 60 * 60 * 1000;
-const cachePath = (id: string) => `${FileSystem.cacheDirectory}anime-${id}.json`;
+const FullScreenView = ({ children }: { children: React.ReactNode }) => (
+  <View
+    className="absolute top-0 left-0 right-0 bottom-0 justify-center items-center bg-black z-50"
+    style={{ flex: 1 }}
+  >
+    {children}
+  </View>
+);
 
-const LoadingView = React.memo(() => (
-  <View className="flex-1 justify-center items-center bg-black">
+const LoadingView = () => (
+  <FullScreenView>
     <ActivityIndicator size="large" color="#1E90FF" />
     <Text className="text-white mt-4">Fetching data...</Text>
-  </View>
-));
+  </FullScreenView>
+);
 
-const ErrorView = React.memo<{ error: string }>(({ error }) => (
-  <View className="flex-1 justify-center items-center bg-black p-4">
-    <Text className="text-red-400 text-center">{error}</Text>
-  </View>
-));
+const ErrorView = ({ error }: { error: string }) => (
+  <FullScreenView>
 
-const EmptyView = React.memo(() => (
-  <View className="flex-1 justify-center items-center bg-black p-4">
+      <Image
+                  source={require('@/assets/images/internalServerError.png')}
+                  className="size-72"
+                  resizeMode="contain"
+                />
+    <Text className="text-red-400 text-center px-4">{error}</Text>
+  </FullScreenView>
+);
+
+const EmptyView = () => (
+  <FullScreenView>
     <Text className="text-red-400">No data found.</Text>
-  </View>
-));
+  </FullScreenView>
+);
 
-const AnimeSection = React.memo<{ title: string; animes?: any[] }>(({ title, animes }) => {
+const AnimeSection = ({ title, animes }: { title: string; animes?: any[] }) => {
   if (!Array.isArray(animes) || animes.length === 0) {
     return (
       <View className="mt-5">
@@ -59,78 +66,30 @@ const AnimeSection = React.memo<{ title: string; animes?: any[] }>(({ title, ani
       <ScrollViewVertical relatedAnimes={animes} />
     </View>
   );
-});
+};
 
 const Details: React.FC = () => {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const navigation = useNavigation();
-  const [filteredData, setFilteredData] = useState<Data | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    id,
+    navigation,
+    filteredData,
+    loading,
+    refreshing,
+    error,
+    handleRefresh,
+    handlePlayPress,
+  } = useAnimeDetails();
 
-  const cacheFilePath = useMemo(() => (id ? cachePath(id) : null), [id]);
+  const { onScroll, headerBackgroundColor } = useScrollHeader('transparent', '#0B1D51');
 
-  const fetchInfo = useCallback(async (forceRefresh = false) => {
-    if (!id || !cacheFilePath) return;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      if (!forceRefresh) {
-        const fileInfo = await FileSystem.getInfoAsync(cacheFilePath);
-        if (fileInfo.exists) {
-          const content = await FileSystem.readAsStringAsync(cacheFilePath);
-          const { data, timestamp } = JSON.parse(content);
-          const isFresh = Date.now() - timestamp < CACHE_DURATION;
-
-          if (isFresh) {
-            setFilteredData(data);
-            setLoading(false);
-            return;
-          } else {
-            await FileSystem.deleteAsync(cacheFilePath).catch(() => {});
-          }
-        }
-      }
-
-      const result: Root = await info(id);
-      setFilteredData(result.data);
-
-      await FileSystem.writeAsStringAsync(
-        cacheFilePath,
-        JSON.stringify({ data: result.data, timestamp: Date.now() })
-      ).catch(err => console.warn('Cache write failed:', err));
-    } catch (err: unknown) {
-      console.error('Error fetching:', err);
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setLoading(false);
-    }
-  }, [id, cacheFilePath]);
-
-  const handleRefresh = useCallback(async () => {
-    if (!id || !cacheFilePath) return;
-
-    setRefreshing(true);
-    try {
-      await FileSystem.deleteAsync(cacheFilePath, { idempotent: true });
-      await fetchInfo(true);
-    } finally {
-      setRefreshing(false);
-    }
-  }, [id, cacheFilePath, fetchInfo]);
-
-  const handlePlayPress = useCallback(() => {
-    console.log(`Play button pressed to ${id} episodes list`);
-  }, [id]);
-
-  const headerRight = useMemo(() => (
-    <Pressable onPress={handleRefresh} className="mr-4">
-      <Ionicons name="refresh" size={24} color="white" />
-    </Pressable>
-  ), [handleRefresh]);
+  const headerRight = useMemo(
+    () => (
+      <Pressable onPress={handleRefresh} className="mr-4">
+        <Ionicons name="refresh" size={24} color="white" />
+      </Pressable>
+    ),
+    [handleRefresh]
+  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -138,10 +97,7 @@ const Details: React.FC = () => {
     });
   }, [navigation, headerRight]);
 
-  useEffect(() => {
-    fetchInfo();
-  }, [fetchInfo]);
-
+  // Conditional screens
   if (loading && !filteredData) return <LoadingView />;
   if (error) return <ErrorView error={error} />;
   if (!filteredData) return <EmptyView />;
@@ -149,29 +105,63 @@ const Details: React.FC = () => {
   const { anime, relatedAnimes, recommendedAnimes } = filteredData;
 
   return (
-    <View className="flex-1 bg-pink-500 relative">
-      <ScrollView
-        className="flex-1 bg-black"
-        contentContainerStyle={{ padding: 16, paddingBottom: 80 }}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor="#1E90FF"
-            colors={['#1E90FF']}
-          />
-        }
-        showsVerticalScrollIndicator={false}
-        removeClippedSubviews={true}
-        maxToRenderPerBatch={10}
-        windowSize={10}
-      >
-        <AnimeDetails anime={anime} />
-        <AnimeSection title="Related Animes" animes={relatedAnimes} />
-        <AnimeSection title="Recommended Animes" animes={recommendedAnimes} />
-      </ScrollView>
+    <View className="flex-1 relative bg-black">
+      <AnimatedHeader backgroundColor={headerBackgroundColor} />
 
-      <View className="rounded-full overflow-hidden absolute bottom-3 right-6">
+      <View className="flex-1">
+        <Animated.ScrollView
+          className="flex-1"
+          contentContainerStyle={{
+            paddingTop: 112,
+            paddingBottom: 80,
+            paddingHorizontal: 16,
+          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor="#1E90FF"
+              colors={['#1E90FF']}
+            />
+          }
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false}
+          removeClippedSubviews
+        >
+          {/* Background Image */}
+          <View className="w-screen h-1/2 absolute top-0 z-0 overflow-hidden">
+            {anime?.info?.poster && (
+              <>
+                <Image
+                  source={{ uri: anime.info.poster }}
+                  resizeMode="cover"
+                  className="w-full h-full"
+                  style={{ opacity: 0.65 }}
+                />
+                <Image
+                  source={require('@/assets/images/black_vertical_gradient.png')}
+                  resizeMode="stretch"
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    width: '100%',
+                    height: '100%',
+                  }}
+                />
+              </>
+            )}
+          </View>
+
+          {/* Anime Content */}
+          <AnimeDetails anime={anime} />
+          <AnimeSection title="Related Animes" animes={relatedAnimes} />
+          <AnimeSection title="Recommended Animes" animes={recommendedAnimes} />
+        </Animated.ScrollView>
+      </View>
+
+      {/* Play Button */}
+      <View className="rounded-full overflow-hidden absolute bottom-12 right-6">
         <Pressable
           onPress={handlePlayPress}
           className="bg-brand-primary flex-row items-center px-4 py-2"

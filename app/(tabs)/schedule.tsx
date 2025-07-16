@@ -16,6 +16,10 @@ import ScheduleList from '@/src/components/schedule/ScheduleList';
 import { useSchedule } from '@/src/hooks/useSchedule';
 import { useCalendarAnimation } from '@/src/hooks/useCalendarAnimation';
 
+import {ScheduledAnime} from "@/src/types/schedule"
+
+
+
 const Schedule = () => {
   const today = useMemo(() => new Date().toLocaleDateString('en-CA'), []);
 
@@ -51,35 +55,33 @@ const Schedule = () => {
   const showLoadingOverlay = loading && schedule.length === 0;
 
   return (
-    <SafeAreaView className="bg-black h-full">
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: 100 }}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor="#8CCDEB"
-            colors={['#8CCDEB']}
-          />
-        }
-        removeClippedSubviews
-        maxToRenderPerBatch={10}
-        windowSize={10}
-      >
-        <View className="bg-black pt-10 px-4 items-center w-full min-h-screen space-y-4">
+<SafeAreaView className="bg-black h-full">
+  <ScrollView
+    contentContainerStyle={{ paddingBottom: 100 }}
+    showsVerticalScrollIndicator={false}
+    refreshControl={
+      <RefreshControl
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+        tintColor="#8CCDEB"
+        colors={['#8CCDEB']}
+      />
+    }
+    removeClippedSubviews={true} // keep this if needed
+  >
+        <View className="bg-black  items-center w-full min-h-screen gap-3">
           {/* Toggle Button */}
-          <Animated.View style={{ transform: [{ scale: buttonScale }] }} className="absolute top-12 z-20">
+          <Animated.View style={{ transform: [{ scale: buttonScale }] }} className="absolute top-16 z-20 right-2">
             <Pressable
               onPress={toggleCalendar}
-              className="flex-row items-center space-x-2 px-4 py-2 bg-brand-primary rounded-full"
+              className="flex-row items-center w-full px-4 py-2 bg-brand-primary rounded-xl"
             >
                {/* Icon wrapper with relative position */}
-                <View className="relative h-8 w-8 mr-2 justify-center items-center">
+                <View className="relative h-8 w-8 mr-1 justify-center items-center">
                   {/* Calendar icon (background) */}
                   <Ionicons
                     name="calendar"
-                    size={18}
+                    size={15}
                     color="#fff"
                   />
               
@@ -94,7 +96,7 @@ const Schedule = () => {
                     <Ionicons
                       name="ban-outline"
                       size={30}
-                      color="red"
+                      color="#0B1D51"
                     />
                   </Animated.View>
                 </View>
@@ -125,11 +127,11 @@ const Schedule = () => {
           {/* Date Display */}
           <Animated.View
             style={{ marginTop: dateMarginTop }}
-            className="mt-2"
+            className=""
           >
-            <View className="flex-row items-center justify-center mt-2 mb-2 rounded">
-              <Ionicons name="time-outline" size={24} color="white" className="mr-2" />
-              <Text className="text-gray-300 text-lg font-medium">{displayDate}</Text>
+            <View className="flex-row  mt-2 mb-2 pl-2 w-screen">
+              <Ionicons name="time" size={24} color="#FFE3A9" className="mr-2" />
+              <Text className="text-brand-pale text-lg font-medium ">{displayDate}</Text>
             </View>
           </Animated.View>
 
@@ -143,7 +145,7 @@ const Schedule = () => {
 
           {/* Schedule List */}
           <ScheduleList
-            schedule={schedule}
+            scheduleData={schedule}
             loading={loading}
             error={error}
             selectedDate={selectedDate}

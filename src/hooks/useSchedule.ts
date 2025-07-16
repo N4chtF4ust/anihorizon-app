@@ -1,16 +1,16 @@
+import { fetchSchedule } from '@/src/api/enpoints/schedule';
+import { ScheduledAnime } from '@/src/types/schedule';
 import { useCallback, useEffect, useState } from 'react';
-import { fetchSchedule } from '@/src/api/schedule';
-import { ScheduleItem } from '@/src/types/schedule';
 
 // Cache duration: 5 minutes
 const CACHE_DURATION = 5 * 60 * 1000;
 
 // In-memory cache for schedule data, keyed by date string
-const scheduleCache = new Map<string, { data: ScheduleItem[]; timestamp: number }>();
+const scheduleCache = new Map<string, { data: ScheduledAnime[]; timestamp: number }>();
 
 export const useSchedule = (initialDate: string) => {
   const [selectedDate, setSelectedDate] = useState(initialDate);
-  const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
+  const [schedule, setSchedule] = useState<ScheduledAnime[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);

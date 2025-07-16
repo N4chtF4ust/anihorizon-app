@@ -1,6 +1,15 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Calendar, DateObject } from 'react-native-calendars';
+import { Calendar } from 'react-native-calendars';
+
+
+interface DateObject {
+  dateString: string; // e.g., '2025-07-16'
+  day: number;
+  month: number;
+  year: number;
+  timestamp: number;
+}
 
 interface CalendarCardProps {
   selectedDate: string;
@@ -31,7 +40,7 @@ const CalendarCard: React.FC<CalendarCardProps> = ({ selectedDate, onDayPress })
   };
 
   return (
-    <View className="rounded-2xl bg-brand-dark  p-4 pt-10 ">
+    <View className="rounded-b-3xl bg-brand-dark  p-4 pt-28  w-screen ">
       <Calendar
         onDayPress={onDayPress}
         markedDates={markedDates}

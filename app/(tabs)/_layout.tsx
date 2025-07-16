@@ -69,13 +69,18 @@ export default function RootLayout() {
             headerStyle: { backgroundColor: '#fff' },
             headerTitleStyle: { fontWeight: 'bold' },
           }}
-          initialRouteName="Home"
+            
+            
         >
-          <Drawer.Screen name="Home" component={IndexScreen} />
-          <Drawer.Screen name="Search" component={SearchScreen} />
-          <Drawer.Screen name="Schedule" component={ScheduleScreen} />
-          <Drawer.Screen name="Watchlist" component={WatchlistScreen} />
-          <Drawer.Screen name="Settings" component={SettingsScreen} />
+        <Drawer.Screen 
+            name="index" 
+            component={IndexScreen}
+            options={{ title: 'Home' }}
+          />
+          <Drawer.Screen name="search" component={SearchScreen} />
+          <Drawer.Screen name="schedule" component={ScheduleScreen} />
+          <Drawer.Screen name="watchlist" component={WatchlistScreen} />
+          <Drawer.Screen name="settings" component={SettingsScreen} />
         </Drawer.Navigator>
       ) : (
         <MobileTabs />

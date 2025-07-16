@@ -10,7 +10,7 @@ const AnimeCard: React.FC<{ anime: Anime; isLast?: boolean }> = ({ anime, isLast
   return (
     <TouchableOpacity
       onPress={handlePress}
-      className={`bg-gray-800 my-2 rounded-xl ${isLast ? 'mb-28' : ''}`}
+      className={`bg-gray-800 my-2 rounded-xl  ${isLast ? 'mb-28' : ''}`}
     >
       <View className="flex-row gap-3 p-3">
         <Image

@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import { Feather, Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
 import {
   TextInput,
-  View,
-  Text,
   TouchableOpacity,
-  ActivityIndicator,
+  View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons, Feather } from '@expo/vector-icons';
-import { search } from '../../src/api/search';
-import { Root, Anime } from '../../src/types/search';
+import { search } from '../../src/api/enpoints/search';
 import SearchContent from '../../src/components/search/SearchContent';
+import { Anime, Root } from '../../src/types/search';
 
 const SearchScreen = () => {
   const [query, setQuery] = useState('');

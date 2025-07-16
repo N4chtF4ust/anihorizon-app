@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, Image } from 'react-native';
+import React, { useState,useRef } from 'react';
+import { View, Text, ScrollView, Image,Pressable,Animated } from 'react-native';
 import ShimmerPlaceholder from '@/src/components/details/ShimmerPlaceholder';
 import { RelatedAnime } from '@/src/types/info';
+import { useRouter } from 'expo-router'; // Make sure you have this
+
 
 interface ScrollViewVerticalProps {
   relatedAnimes?: RelatedAnime[]; // ✅ optional, safe typing
@@ -9,6 +11,35 @@ interface ScrollViewVerticalProps {
 
 const RelatedAnimeCard: React.FC<{ anime: RelatedAnime }> = ({ anime }) => {
   const [loaded, setLoaded] = useState(false);
+  const router = useRouter();
+
+  // Animation scale value
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scale, {
+      toValue: 0.95,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 8,
+    }).start();
+
+    
+    
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 8,
+    }).start();
+  };
+
+  const handlePress = () => {
+    router.push(`/details/${anime.id}`);
+  };
 
   return (
     <View className="items-center m-1 w-40">
@@ -18,12 +49,21 @@ const RelatedAnimeCard: React.FC<{ anime: RelatedAnime }> = ({ anime }) => {
         </View>
       )}
 
-      <Image
-        source={{ uri: anime.poster }}
-        className="w-40 h-52 rounded-md"
-        onLoadEnd={() => setLoaded(true)}
-        onError={() => setLoaded(true)}
-      />
+      <Pressable
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        onPress={handlePress}
+      >
+        <Animated.View style={{ transform: [{ scale }] }}>
+          <Image
+            source={{ uri: anime.poster }}
+            className="w-40 h-52 rounded-md"
+            onLoadEnd={() => setLoaded(true)}
+            onError={() => setLoaded(true)}
+            style={{ opacity: loaded ? 1 : 0 }}
+          />
+        </Animated.View>
+      </Pressable>
 
       <Text className="text-white text-xs mt-1 text-center w-24">
         {anime.name}

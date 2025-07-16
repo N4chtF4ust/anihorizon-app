@@ -25,7 +25,7 @@ const AnimeDetails: React.FC<DetailsProps> = ({ anime }) => {
   return (
     <>
       {/* Banner */}
-      <View className="flex-row bg-[#0B1D51] rounded-xl overflow-hidden mt-4">
+      <View className="flex-row bg-brand-primary rounded-xl overflow-hidden mt-4 ">
         <View className="flex-1 p-4 justify-center">
           <Text className="text-white text-xl font-bold" numberOfLines={2}>
             {anime.info.name}
@@ -55,7 +55,7 @@ const AnimeDetails: React.FC<DetailsProps> = ({ anime }) => {
       </View>
 
       {/* Description */}
-      <View className="mt-5">
+      <View className="mt-5 ">
         <View className="flex-row items-center mb-1">
           <MaterialIcons name="description" size={18} color="white" />
           <Text className="text-white font-semibold ml-2">Description</Text>
@@ -160,14 +160,14 @@ const AnimeDetails: React.FC<DetailsProps> = ({ anime }) => {
                   <View className="w-20 items-center px-1 mt-1">
                     <Text
                       className="text-white text-xs text-center"
-                      numberOfLines={2}
+                      numberOfLines={10}
                       ellipsizeMode="tail"
                     >
                       {pair.character.name}
                     </Text>
                     <Text
                       className="text-gray-400 text-xs text-center mt-0.5"
-                      numberOfLines={1}
+                      numberOfLines={10}
                       ellipsizeMode="tail"
                     >
                       VA: {pair.voiceActor.name}
